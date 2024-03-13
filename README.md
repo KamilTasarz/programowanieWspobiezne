@@ -4,5 +4,5 @@
 
 | Name Surname (initials) | GUID                                     |
 | ----------------------- | ---------------------------------------- |
-| AB                      | `{FD9D086C-532F-4AAC-BB99-69D7798837D8}` |
-| Jan Kowalski            | `{44FBFCF5-4430-4964-878D-1867DC679E0D}` |
+| Kamil Tasarz            | `{4086ab2c-aab6-40b1-9c6b-b4d135320668}` |
+| Magdalena Ożarek        | `{5ff19e16-d255-472b-abd6-cae993fab2f6}` |
