@@ -1,6 +1,6 @@
 ﻿namespace Concurrent
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -12,7 +12,7 @@
                 Console.WriteLine(divideClass.divide(2.5, 0));
             } catch (DivideByZeroException e)
             {
-                Console.WriteLine($"DivideByZero exception: {e}");
+                Console.WriteLine("DivideByZero exception");
             } 
             
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Concurrent
 {
-    internal class DivideClass
+    public class DivideClass
     {
         public double divide(double divident, double divisor)
         {
