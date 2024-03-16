@@ -5,12 +5,14 @@ namespace ConcurrentTest
         [SetUp]
         public void Setup()
         {
+
         }
 
         [Test]
-        public void Test1()
+        public void TestProgram()
         {
-            Assert.Pass();
+            DivideClass divideClass = new DivideClass();
+            Assert.Throws(DivideByZeroException, divideClass.divide(1, 0));
         }
     }
 }

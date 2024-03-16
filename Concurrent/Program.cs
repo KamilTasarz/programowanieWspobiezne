@@ -4,8 +4,17 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
-            Console.WriteLine("Hello, World!");
+            DivideClass divideClass = new DivideClass();
+              
+            Console.WriteLine(divideClass.divide(2.5, 0.5));
+            try
+            {
+                Console.WriteLine(divideClass.divide(2.5, 0));
+            } catch (DivideByZeroException e)
+            {
+                Console.WriteLine($"DivideByZero exception: {e}");
+            } 
+            
         }
     }
 }
