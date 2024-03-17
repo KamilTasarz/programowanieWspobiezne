@@ -13,6 +13,7 @@
             } catch (DivideByZeroException e)
             {
                 Console.WriteLine("DivideByZero exception");
+
             } 
             
         }
