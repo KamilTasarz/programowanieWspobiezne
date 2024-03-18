@@ -1,5 +1,4 @@
 using Concurrent;
-using NUnit.Framework;
 
 namespace ConcurrentTests
 {
