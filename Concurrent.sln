@@ -10,8 +10,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{9B385F23-3087-4D74-B864-509BDDFDFF2D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{AC25DF48-032C-455E-AE4A-0E7318537E3F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5FE48698-A275-4402-B090-E3D7B35BF20F} = {5FE48698-A275-4402-B090-E3D7B35BF20F}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "View\View.csproj", "{89FC4E8A-E82C-4870-B145-A6511A77C527}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED5E4E78-F66E-4682-8EB9-C9A77ABCEBF3} = {ED5E4E78-F66E-4682-8EB9-C9A77ABCEBF3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "ViewModel\ViewModel.csproj", "{ED5E4E78-F66E-4682-8EB9-C9A77ABCEBF3}"
 EndProject
