@@ -6,7 +6,20 @@
         xmlns:local="clr-namespace:View"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+    <Canvas>
+        <ItemsControl ItemsSource="{Binding Balls}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas /> 
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Fill="Red" Width="20" Height="20" Canvas.Top="{Binding Top}" Canvas.Left="{Binding Left}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button Canvas.Top="10" Canvas.Left="100" Width="100" Height="30" FontSize="20" Command="Start()">Start</Button>
+        <Button Canvas.Top="50" Canvas.Left="100" Width="100" Height="30" FontSize="20" >Stop</Button>
+    </Canvas>
 </Window>
