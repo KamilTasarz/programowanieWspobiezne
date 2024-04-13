@@ -12,5 +12,12 @@ namespace Data
         public abstract ObservableCollection<IBall> Balls { get; }
         public abstract double Width { get; }
         public abstract double Height { get; }
+
+        public abstract Ball CreateBall(int id, double x, double y, double diameter);
+
+        public static DataApi CreateDataApi(double w, double h)
+        {
+            return new DataApi(w, h);
+        }
     }
 }

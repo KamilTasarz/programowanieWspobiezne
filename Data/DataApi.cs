@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
+
     public class DataApi : DataAbstractApi
     {
         private ObservableCollection<IBall> balls;
@@ -21,5 +22,9 @@ namespace Data
             Height = h;
         }
 
+        public override Ball CreateBall(int id, double x, double y, double diameter)
+        {
+            return new Ball(id, x, y, diameter);
+        }
     }
 }
