@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    internal class DataAbstractApi
+    abstract class DataAbstractApi
     {
+        public abstract double Width { get; }
+        public abstract double Height { get; }
     }
 }
