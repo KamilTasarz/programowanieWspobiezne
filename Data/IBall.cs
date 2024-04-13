@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    abstract class IBall : INotifyPropertyChanged
+    public abstract class IBall : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
