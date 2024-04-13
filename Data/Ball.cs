@@ -30,6 +30,7 @@ namespace Data
                 x += (random.NextDouble() - 0.5) * 10;
                 y += (random.NextDouble() - 0.5) * 10;
                 await Task.Delay(100, cancellationToken);
+                RaisePropertyChanged();
             }
         }
 
