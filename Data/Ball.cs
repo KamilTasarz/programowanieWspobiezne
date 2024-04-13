@@ -9,7 +9,7 @@ using Windows.Graphics.Display;
 
 namespace Data
 {
-    internal class Ball : IBall
+    public class Ball : IBall
     {
         protected int id;
 
