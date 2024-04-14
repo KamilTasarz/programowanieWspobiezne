@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Data;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,6 +22,8 @@ namespace Logic
         // {
         //  return new LogicApi(w, h, api ?? DataAbstractApi.CreateApi(w, h));
         //}
+
+        
         public abstract IList CreateBalls(int amount);
         public abstract IList GetAllBalls();
         public abstract double GetBallXByID(int id);
@@ -31,6 +35,11 @@ namespace Logic
         public abstract void Stop();
         public abstract int Width { get; }
         public abstract int Height { get; }
+
+        public static LogicAbstractApi CreateApi(int w, int h, DataAbstractApi api = default(Data.DataAbstractApi))
+        {
+            return new LogicApi(w, h, api ?? DataAbstractApi.CreateDataApi(w, h));
+        }
 
     }
 }

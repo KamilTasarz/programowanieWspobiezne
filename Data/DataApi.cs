@@ -10,21 +10,21 @@ namespace Data
 
     public class DataApi : DataAbstractApi
     {
-        private ObservableCollection<IBall> balls;
+        //private ObservableCollection<IBall> balls;
         public override double Width { get; }
         public override double Height { get; }
 
-        public override ObservableCollection<IBall> Balls { get => balls; }
+        //public override ObservableCollection<IBall> Balls { get => balls; }
 
-        DataApi (double w, double h)
+        public DataApi (double w, double h)
         {
             Width = w;
             Height = h;
         }
 
-        public override Ball CreateBall(int id, double x, double y, double diameter)
+        public override Ball CreateBall(int id, double x, double y)
         {
-            return new Ball(id, x, y, diameter);
+            return new Ball(id, x, y);
         }
     }
 }

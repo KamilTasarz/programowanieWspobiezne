@@ -6,22 +6,42 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using Data;
 
 namespace Logic
 {
-    class LogicApi : LogicAbstractApi
+    public class LogicApi : LogicAbstractApi
     {
-        
-        private DataApi data;
+        private ObservableCollection<IBall> balls;
 
-        public override int Width => throw new NotImplementedException();
+        private DataAbstractApi data;
+        Random random = new Random();
 
-        public override int Height => throw new NotImplementedException();
+        public override int Width { get; }
+
+        public override int Height { get; }
+
+        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken _cancellationToken;
+
+        public LogicApi(int w, int h, DataAbstractApi api)
+        {
+            Width = w;
+            Height = h;
+            data = api;
+        }
 
         public override IList CreateBalls(int amount)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < amount; i++)
+            {
+                double x = random.Next(0, Width);
+                double y = random.Next(0, Height);
+
+                balls.Add(data.CreateBall(i, x, y));
+            }
+            return balls;
         }
 
         public override bool Equals(object? obj)
@@ -31,22 +51,36 @@ namespace Logic
 
         public override IList GetAllBalls()
         {
-            throw new NotImplementedException();
+            return balls;
         }
 
         public override int GetBallsAmount()
         {
-            throw new NotImplementedException();
+            return balls.Count;
         }
 
         public override double GetBallXByID(int id)
         {
-            throw new NotImplementedException();
+            foreach(IBall b in balls)
+            {
+                if (b.ID  == id)
+                {
+                    return b.X;
+                }
+            }
+            return 0;
         }
 
         public override double GetBallYByID(int id)
         {
-            throw new NotImplementedException();
+            foreach (IBall b in balls)
+            {
+                if (b.ID == id)
+                {
+                    return b.Y;
+                }
+            }
+            return 0;
         }
 
         public override int GetHashCode()
@@ -59,19 +93,30 @@ namespace Logic
             throw new NotImplementedException();
         }
 
-        public override void MoveBall(int id)
-        {
-            throw new NotImplementedException();
-        }
+        //public override void MoveBall(int id)
+        //{
+        //    foreach (IBall b in balls)
+        //    {
+        //        if (b.ID == id)
+        //        {
+        //            b.CreateTaskMove(new CancellationToken(false));
+        //        }
+        //    }
+        //}
 
         public override void Start()
         {
-            throw new NotImplementedException();
+            _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationToken = _cancellationTokenSource.Token;
+            foreach(IBall b in balls)
+            {
+                b.CreateTaskMove(_cancellationToken);
+            }
         }
 
         public override void Stop()
         {
-            throw new NotImplementedException();
+            _cancellationTokenSource.Cancel();
         }
 
         public override string? ToString()
@@ -82,6 +127,11 @@ namespace Logic
         protected override void RaisePropertyChanged(int ballID, [CallerMemberName] string propertyName = null)
         {
             base.RaisePropertyChanged(ballID, propertyName);
+        }
+
+        public override void MoveBall(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
