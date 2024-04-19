@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    internal class Ball : DataApi
+    public class Ball : DataApi
     {
         private float x;
         private float y;
@@ -47,9 +47,15 @@ namespace Data
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public void OnPropertyChanged(string propertyName)
+        public override void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public Ball (float x, float y, float radius) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
         }
     }
 }
