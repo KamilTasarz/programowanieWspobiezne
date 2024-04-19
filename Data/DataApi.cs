@@ -1,30 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Data
 {
-
-    public class DataApi : DataAbstractApi
+    abstract class DataApi : INotifyPropertyChanged
     {
-        //private ObservableCollection<IBall> balls;
-        public override double Width { get; }
-        public override double Height { get; }
+        
+        public abstract float X { get; set; }
+        public abstract float Y { get; set; }
 
-        //public override ObservableCollection<IBall> Balls { get => balls; }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public DataApi (double w, double h)
-        {
-            Width = w;
-            Height = h;
-        }
-
-        public override Ball CreateBall(int id, double x, double y)
-        {
-            return new Ball(id, x, y);
-        }
+        public abstract float GetVelocityX();
+        public abstract void SetVelocityX(float newVelocityX);
+        public abstract float GetVelocityY();
+        public abstract void SetVelocityY(float newVelocityY);
+        public abstract float GetRadius();
     }
 }

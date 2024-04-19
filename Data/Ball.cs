@@ -1,52 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.ComponentModel;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-
 
 namespace Data
 {
-    public class Ball : IBall
+    internal class Ball : DataApi
     {
-        protected int id;
-
-        private double x;
-        private double y;
-        private double diameter = 20;
-        private readonly Random random = new Random();
-        private Task task;
-        public override void CreateTaskMove(CancellationToken cancellationToken)
+        private float x;
+        private float y;
+        private float velocityX;
+        private float velocityY;
+        private float radius;
+        
+        public override float X
         {
-            task = Move(cancellationToken);
-        }
-
-        private async Task Move(CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested)
+            get { return x; }
+            set
             {
-                x += (random.NextDouble() - 0.5) * 2;
-                y += (random.NextDouble() - 0.5) * 2;
-                await Task.Delay(100, cancellationToken);
-                RaisePropertyChanged();
+                x = value;
             }
         }
 
-
-        public int ID { get => id; }
-        public double X { get => x; set => this.x = value;}
-        public double Y { get => y; set => this.y = value;}
-        public double Diameter { get => diameter; }
-
-        public Ball(int id, double x, double y) 
+        public override float Y
         {
-            this.id = id;
-            this.x = x;
-            this.y = y;
-            this.diameter = diameter;
+            get { return y; }
+            set
+            {
+                y = value;
+            }
+        }
+        public override float GetVelocityX() { return velocityX; }
+        public override float GetVelocityY() { return velocityY; }
+        public override float GetRadius() { return radius; }
+        public override void SetVelocityY(float newVelocityY) 
+        {  
+           velocityY = newVelocityY; 
+        }
+        public override void SetVelocityX(float newVelocityX) 
+        {  
+           velocityX = newVelocityX; 
+        }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
