@@ -1,4 +1,5 @@
 ﻿using Data;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Logic
@@ -14,5 +15,10 @@ namespace Logic
         public abstract void updateVelocity(DataApi ball);
         public abstract bool isCollision(DataApi ball);
 
+        public abstract ObservableCollection<DataApi> getObservs();
+        public static LogicApi CreateLogicApi(int width, int height, int amount)
+        {
+            return new Logic(width, height, amount);
+        }
     }
 }

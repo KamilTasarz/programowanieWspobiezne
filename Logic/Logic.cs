@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Data;
 using System.ComponentModel;
 using System.Threading;
+using System.Collections.ObjectModel;
 
 namespace Logic
 {
@@ -18,6 +19,7 @@ namespace Logic
         private List<Task> tasks;
         private CancellationToken isRunning;
         private CancellationTokenSource source;
+        private ObservableCollection<DataApi> observableData = new ObservableCollection<DataApi>();
         public Logic(int width, int height, int amount)
         {
             this.width = width;
@@ -29,6 +31,8 @@ namespace Logic
                 balls[i] = CreateBall();
             }
         }
+
+        public override ObservableCollection<DataApi> getObservs() {  return observableData; }
 
         Random random = new Random();
         public override DataApi CreateBall()

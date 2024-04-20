@@ -19,6 +19,6 @@ namespace Data
         { 
             return new Ball(x, y, radius); 
         }
-        public abstract void OnPropertyChanged(string propertyName)
+        public abstract void OnPropertyChanged(string propertyName);
     }
 }
