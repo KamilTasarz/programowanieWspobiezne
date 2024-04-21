@@ -1,59 +1,55 @@
 ﻿using Logic;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using System.Numerics;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using Data;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Model
 {
     public class Model : ModelApi
     {
-        private LogicApi logic;
-        private int width;
-        private int height;
-        private int amount;
-        private Canvas board;
-        Ellipse[] ellipses;
         private IObservable<EventPattern<BallChangeEventArgs>> eventObservable = null;
+
+        public LogicApi logic { get; set; }
         public override event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<BallChangeEventArgs> BallChanged;
-        public IObservable<EventHandler> ballsChanged;
-        
+        MyVector[] ModelBall;
 
-        public override IEllipse[] getBalls() {
-            return ellipses; 
-        }
-        public Model(LogicApi logic,int width, int height, int amount) 
+        public override MyVector[] GetBalls()
         {
-            this.logic = logic;
-            board = new Canvas();
-            board.Width = width;
-            board.Height = height;
-            ellipses = new Ellipse[amount];
+            return ModelBall;
         }
 
-        public override void Start()
+        public Model(int width, int height, int amount)
         {
+            logic = LogicApi.CreateLogicApi(width, height, amount);
+            eventObservable = Observable.FromEventPattern<BallChangeEventArgs>(this, "BallChanged");
             
-            for(int i = 0; i < amount; i++)
+            ModelBall = new MyVector[amount];
+            for (int i = 0; i < amount; i++)
             {
-                ellipses[i] = new Ellipse(logic.getObservs().ElementAt(i).X, logic.getObservs().ElementAt(i).Y);
-                
+                MyVector ball = new MyVector(logic.GetPositions()[i][0], logic.GetPositions()[i][1]);
+                ModelBall[i] = ball;
                 logic.PropertyChanged += OnBallChanged;
             }
         }
-
         private void OnBallChanged(object sender, PropertyChangedEventArgs args)
         {
-            ObservableCollection<DataApi> w = logic.getObservs();
-            for(int i = 0; i < amount; i++)
+            for (int i = 0; i < logic.GetPositions().Length; i++)
             {
-                ellipses[i].x = w.ElementAt(i).X;
-                ellipses[i].y = w.ElementAt(i).Y;
+                ModelBall[i].x = logic.GetPositions()[i][0];
+                ModelBall[i].y = logic.GetPositions()[i][1];
             }
+        }
+        
+
+        public override void Start()
+        {
+            logic.Start();
         }
 
         public override void Stop()
@@ -61,7 +57,7 @@ namespace Model
             logic.Stop();
         }
 
-        public override IDisposable Subscribe(IObserver<IEllipse> observer)
+        public override IDisposable Subscribe(IObserver<IMyVector> observer)
         {
             return eventObservable.Subscribe(x => observer.OnNext(x.EventArgs.Ball), ex => observer.OnError(ex), () => observer.OnCompleted());
         }

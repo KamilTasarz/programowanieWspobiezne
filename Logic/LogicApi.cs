@@ -4,18 +4,19 @@ using System.ComponentModel;
 
 namespace Logic
 {
-    public abstract class LogicApi : INotifyPropertyChanged
+    public abstract class LogicApi
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public abstract event PropertyChangedEventHandler? PropertyChanged;
 
         public abstract void Start(); //bool, żeby zakonczyc
         public abstract void Stop();
         public abstract DataApi CreateBall();
         public abstract void updatePosition(DataApi ball);
-        public abstract void updateVelocity(DataApi ball);
-        public abstract bool isCollision(DataApi ball);
+        public abstract void updateVelocity(DataApi ball, bool UpDown);
+        public abstract bool isCollisionUpDown(DataApi ball);
+        public abstract bool isCollisionLeftRight(DataApi ball);
+        public abstract float[][] GetPositions();
 
-        public abstract ObservableCollection<DataApi> getObservs();
         public static LogicApi CreateLogicApi(int width, int height, int amount)
         {
             return new Logic(width, height, amount);

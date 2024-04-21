@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Data
 {
-    public class Ball : DataApi
+    public class Ball : DataApi, INotifyPropertyChanged
     {
+        public override event PropertyChangedEventHandler PropertyChanged;
+
         private float x;
         private float y;
         private float velocityX;
@@ -45,17 +48,19 @@ namespace Data
         }
 
 
-        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public override void OnPropertyChanged(string propertyName)
+        public override void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        //Random random = new Random();
 
         public Ball (float x, float y, float radius) {
             this.x = x;
             this.y = y;
             this.radius = radius;
         }
+
     }
 }

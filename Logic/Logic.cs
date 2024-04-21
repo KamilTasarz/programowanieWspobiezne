@@ -7,32 +7,44 @@ using Data;
 using System.ComponentModel;
 using System.Threading;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace Logic
 {
-    public class Logic : LogicApi
+    public class Logic : LogicApi, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public override event PropertyChangedEventHandler PropertyChanged;
+
+        //stol
         private int width;
         private int height;
         private DataApi[] balls;
-        private List<Task> tasks;
+
+        private List<Task> tasks = new List<Task>();
+
+        //bool
         private CancellationToken isRunning;
         private CancellationTokenSource source;
-        private ObservableCollection<DataApi> observableData = new ObservableCollection<DataApi>();
+
+        public DataApi[] GetBalls() { return balls; }
+
+
         public Logic(int width, int height, int amount)
         {
+            
             this.width = width;
             this.height = height;
             balls = new Ball[amount];
             
+
+
             for (int i = 0; i < amount; i++)
             {
                 balls[i] = CreateBall();
+                updateVelocity(balls[i], false);
             }
         }
 
-        public override ObservableCollection<DataApi> getObservs() {  return observableData; }
 
         Random random = new Random();
         public override DataApi CreateBall()
@@ -40,78 +52,119 @@ namespace Logic
             int radius = 20;
             float x = random.NextInt64(radius, width - radius);
             float y = random.NextInt64(radius, height - radius);
+        
             return DataApi.CreateBall(x, y, radius);
+        }
+
+        public override float[][] GetPositions()
+        {
+            float[][] positions = new float[balls.Length][];
+            for (int i = 0;i < balls.Length;i++)
+            {
+                positions[i] = new float[2];
+                positions[i][0] = balls[i].X;
+                positions[i][1] = balls[i].Y;
+            }
+
+            return positions;
+        }
+
+        public override bool isCollisionUpDown(DataApi ball)
+        {
+            return ball.Y <=0 || ball.Y >= height;
+        }
+        public override bool isCollisionLeftRight(DataApi ball)
+        {
+            return ball.X <= 0 || ball.X >= width;
+        }
+
+        private async Task zadanie(CancellationToken token, DataApi ball)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                if (isCollisionUpDown(ball))
+                {
+                    updateVelocity(ball, true);
+                } else if (isCollisionLeftRight(ball))
+                {
+                    updateVelocity(ball, false);
+                }
+                updatePosition(ball);
+                ball.PropertyChanged += RelayBallUpdate;
+                await Task.Delay(10); 
+            }
         }
 
         public override void Start()
         {
-            //if (!isRunning.IsCancellationRequested) 
-            //{
-                foreach (var ball in balls)
-                {
-                    updateVelocity(ball);
-                    isRunning = source.Token;
-                    tasks = new List<Task>();
-                    Task task = new Task(() => //jak nie zadziala zmienic na Thread
-                    {
-                        while (isRunning.IsCancellationRequested)
-                        {
-                            if (isCollision(ball))
-                            {
-                                updateVelocity(ball);
-                            }
-                            updatePosition(ball);
-                            ball.PropertyChanged += OnPropertyChanged;
-                            Task.Delay(100);
-                        }
-                    });
-                    
-                    tasks.Add(task);
-                    task.Start();
-                }
-            //}
+            source = new CancellationTokenSource();
+            foreach (var ball in balls)
+            {
+
+                CancellationToken running = source.Token;
+                Task task = zadanie(running, ball);
+                tasks.Add(task);
+            }
         }
+    
 
         public override void Stop()
         {
-            //foreach(var task in tasks)
-            //{
-                source.Cancel();
-            //}
+            source.Cancel();
+            tasks.Clear();
         }
 
         public override void updatePosition(DataApi ball)
         {
             ball.X += ball.GetVelocityX();
             ball.Y += ball.GetVelocityY();
-            ball.OnPropertyChanged(nameof(ball.X));
-            ball.OnPropertyChanged(nameof(ball.Y));
+            UpdateBallPosition(ball);
         }
 
-        public override void updateVelocity(DataApi ball)
+        public override void updateVelocity(DataApi ball, bool UpDown)
         {
             Random random = new Random();
-            float velX;
-            float velY;
-            do 
+            float velX = ball.GetVelocityX();
+            float velY = ball.GetVelocityY();
+            if (ball.GetVelocityX() == 0)
             {
-                velX = random.NextInt64(1, 5) - 3;
-                velY = random.NextInt64(1, 5) - 3;
-            } while (velX == 0 || velY == 0);
+                do
+                {
+                    velX = random.NextInt64(1, 5) - 3;
+                    velY = random.NextInt64(1, 5) - 3;
+                } while (velX == 0 || velY == 0);
+            }
+            else if (UpDown)
+            {
+                 velY = -ball.GetVelocityY();
+            }
+            else
+            {
+                velX = -ball.GetVelocityX();
+            }
             ball.SetVelocityX(velX);
             ball.SetVelocityY(velY);
-            ball.OnPropertyChanged(nameof (ball.GetVelocityX));
-            ball.OnPropertyChanged(nameof (ball.GetVelocityY));
+            ball.RaisePropertyChanged(nameof (ball.GetVelocityX));
+            ball.RaisePropertyChanged(nameof (ball.GetVelocityY));
         }
 
-        public override bool isCollision(DataApi ball)
+        
+
+        public void UpdateBallPosition(DataApi ball)
         {
-            return ball.X <= ball.GetRadius() || ball.Y <= ball.GetRadius() || ball.X >= width - ball.GetRadius() || ball.Y >= height - ball.GetRadius();
+            ball.RaisePropertyChanged(nameof(ball.X));
+            ball.RaisePropertyChanged(nameof(ball.Y));
         }
 
-        public void OnPropertyChanged(Object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(PropertyChangedEventArgs args)
         {
-            this.PropertyChanged?.Invoke(this, e);
+            PropertyChanged?.Invoke(this, args);
         }
+
+        private void RelayBallUpdate(object source, PropertyChangedEventArgs args)
+        {
+            this.OnPropertyChanged(args);
+        }
+
     }
 }

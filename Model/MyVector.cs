@@ -1,20 +1,22 @@
-﻿using System;
+﻿using Logic;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
 namespace Model
 {
-    public class Ellipse : IEllipse
+    public class MyVector : IMyVector
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        
         private float X;
         private float Y;
-        
 
         public float x
         {
@@ -42,9 +44,8 @@ namespace Model
             }
         }
 
-        public float r { get; internal set; }
 
-        public Ellipse(float posX, float posY)
+        public MyVector(float posX, float posY)
         {
             this.X = posX;
             this.Y = posY;

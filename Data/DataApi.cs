@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Data
 {
-    public abstract class DataApi : INotifyPropertyChanged
+    public abstract class DataApi
     {
         
         public abstract float X { get; set; }
         public abstract float Y { get; set; }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public abstract event PropertyChangedEventHandler? PropertyChanged;
 
         public abstract float GetVelocityX();
         public abstract void SetVelocityX(float newVelocityX);
@@ -19,6 +20,6 @@ namespace Data
         { 
             return new Ball(x, y, radius); 
         }
-        public abstract void OnPropertyChanged(string propertyName);
+        public abstract void RaisePropertyChanged([CallerMemberName] string? propertyName = null);
     }
 }
