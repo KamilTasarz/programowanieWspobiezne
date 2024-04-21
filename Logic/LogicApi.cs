@@ -8,7 +8,7 @@ namespace Logic
     {
         public abstract event PropertyChangedEventHandler? PropertyChanged;
 
-        public abstract void Start(); //bool, żeby zakonczyc
+        public abstract void Start();
         public abstract void Stop();
         public abstract DataApi CreateBall();
         public abstract void updatePosition(DataApi ball);

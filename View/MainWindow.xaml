@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:View"
         xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="820">
+        Title="MainWindow" Height="490" Width="885">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
-    <Border Padding="10">
-        <Grid>
+    <Border Padding="10" Margin="0,0,0,18">
+        <Grid Margin="0,0,-10,34">
             <Grid.RowDefinitions>
                 <RowDefinition Height="360"/>
             </Grid.RowDefinitions>
@@ -23,12 +23,12 @@
                 </StackPanel>
                 <Button Content="STOP"  Height="20" Command="{Binding StopCmd}"/>
             </StackPanel>
-            
-            <ItemsControl ItemsSource="{Binding ellipsesCooridinates, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,269,-54" RenderTransformOrigin="0.5,0.5">
+
+            <ItemsControl ItemsSource="{Binding ellipsesCooridinates, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,272,-80" RenderTransformOrigin="0.5,0.5">
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Name="Canvas" Width="400" Height="400" Background="darkGreen" ></Canvas>
+                        <Canvas Name="Canvas" Width="400" Height="400" Background="LightBlue" ></Canvas>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>

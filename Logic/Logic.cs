@@ -34,7 +34,7 @@ namespace Logic
             
             this.width = width;
             this.height = height;
-            balls = new Ball[amount];
+            balls = new DataApi[amount];
             
 
 
@@ -80,6 +80,8 @@ namespace Logic
 
         private async Task zadanie(CancellationToken token, DataApi ball)
         {
+
+            ball.PropertyChanged += RelayBallUpdate;
             while (!token.IsCancellationRequested)
             {
                 if (isCollisionUpDown(ball))
@@ -90,8 +92,7 @@ namespace Logic
                     updateVelocity(ball, false);
                 }
                 updatePosition(ball);
-                ball.PropertyChanged += RelayBallUpdate;
-                await Task.Delay(10); 
+                await Task.Delay(20); 
             }
         }
 

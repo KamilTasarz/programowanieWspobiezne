@@ -17,23 +17,23 @@ namespace Model
         public LogicApi logic { get; set; }
         public override event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<BallChangeEventArgs> BallChanged;
-        MyVector[] ModelBall;
+        MyVector[] EllipseVector;
 
         public override MyVector[] GetBalls()
         {
-            return ModelBall;
+            return EllipseVector;
         }
 
         public Model(int width, int height, int amount)
         {
             logic = LogicApi.CreateLogicApi(width, height, amount);
             eventObservable = Observable.FromEventPattern<BallChangeEventArgs>(this, "BallChanged");
-            
-            ModelBall = new MyVector[amount];
+
+            EllipseVector = new MyVector[amount];
             for (int i = 0; i < amount; i++)
             {
                 MyVector ball = new MyVector(logic.GetPositions()[i][0], logic.GetPositions()[i][1]);
-                ModelBall[i] = ball;
+                EllipseVector[i] = ball;
                 logic.PropertyChanged += OnBallChanged;
             }
         }
@@ -41,8 +41,8 @@ namespace Model
         {
             for (int i = 0; i < logic.GetPositions().Length; i++)
             {
-                ModelBall[i].x = logic.GetPositions()[i][0];
-                ModelBall[i].y = logic.GetPositions()[i][1];
+                EllipseVector[i].x = logic.GetPositions()[i][0];
+                EllipseVector[i].y = logic.GetPositions()[i][1];
             }
         }
         
