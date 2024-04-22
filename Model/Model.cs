@@ -24,9 +24,9 @@ namespace Model
             return EllipseVector;
         }
 
-        public Model(int width, int height, int amount)
+        public Model(LogicApi api, int amount)
         {
-            logic = LogicApi.CreateLogicApi(width, height, amount);
+            logic = api; 
             eventObservable = Observable.FromEventPattern<BallChangeEventArgs>(this, "BallChanged");
 
             EllipseVector = new MyVector[amount];

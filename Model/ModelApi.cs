@@ -12,8 +12,8 @@ namespace Model
     {
         public static ModelApi CreateApi(int x, int y, int amount)
         {
-            return new Model(x, y, amount);
-            
+            LogicApi logic = LogicApi.CreateLogicApi(x, y, amount);
+            return new Model(logic, amount);
         }
         public abstract void Start();
         public abstract void Stop();
