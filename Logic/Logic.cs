@@ -25,6 +25,7 @@ namespace Logic
         //bool
         private CancellationToken isRunning;
         private CancellationTokenSource source;
+        private Mutex mutex = new Mutex();
 
         public DataApi[] GetBalls() { return balls; }
 
@@ -49,10 +50,39 @@ namespace Logic
         Random random = new Random();
         public override DataApi CreateBall()
         {
-            int radius = 20;
+            int radius = 10;
+            
             float x = random.NextInt64(radius, width - radius);
             float y = random.NextInt64(radius, height - radius);
-        
+
+            float diameter = 2 * radius;
+            bool done = false;
+            if (balls.Length == 0)
+            {
+                done = true;
+            }
+            while (!done)
+            {
+                foreach (var tempBall in balls)
+                {
+                    if (tempBall == null)
+                    {
+                        done = true;
+                        break;
+                    }
+                    double xdiff = tempBall.X - x;
+                    double ydiff = tempBall.Y - y;
+                    double distance = Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+                    if (distance <= diameter + 5)
+                    {
+                        x = random.NextInt64(radius, width - radius);
+                        y = random.NextInt64(radius, height - radius);
+
+                        break;
+                    }
+                }
+                done = true;
+            }
             return DataApi.CreateBall(x, y, radius);
         }
 
@@ -84,13 +114,6 @@ namespace Logic
             ball.PropertyChanged += RelayBallUpdate;
             while (!token.IsCancellationRequested)
             {
-                if (isCollisionUpDown(ball))
-                {
-                    updateVelocity(ball, true);
-                } else if (isCollisionLeftRight(ball))
-                {
-                    updateVelocity(ball, false);
-                }
                 updatePosition(ball);
                 await Task.Delay(20); 
             }
@@ -119,6 +142,7 @@ namespace Logic
         {
             ball.X += ball.GetVelocityX();
             ball.Y += ball.GetVelocityY();
+            CheckAll(ball);
             UpdateBallPosition(ball);
         }
 
@@ -149,7 +173,45 @@ namespace Logic
             ball.RaisePropertyChanged(nameof (ball.GetVelocityY));
         }
 
-        
+        private void CheckAll(DataApi ball)
+        {
+            mutex.WaitOne();
+            if (isCollisionUpDown(ball))
+            {
+                updateVelocity(ball, true);
+            }
+            else if (isCollisionLeftRight(ball))
+            {
+                updateVelocity(ball, false);
+            }
+            checkBallCollisons(ball);
+            
+
+            mutex.ReleaseMutex();
+        }
+
+        private void checkBallCollisons(DataApi ball)
+        {
+            float diameter = 2 * balls[0].GetRadius();
+            foreach(var tempBall in balls)
+            {
+                if (tempBall != ball)
+                {
+                    double xdiff = tempBall.X - ball.X;
+                    double ydiff = tempBall.Y - ball.Y;
+                    double distance = Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+                    if  (distance <= diameter)
+                    {
+                        float tempX = ball.GetVelocityX();
+                        float tempY = ball.GetVelocityY();
+                        ball.SetVelocityX(tempBall.GetVelocityX());
+                        ball.SetVelocityY(tempBall.GetVelocityY());
+                        tempBall.SetVelocityX(tempX);
+                        tempBall.SetVelocityY(tempY);
+                    }
+                }
+            }
+        }
 
         public void UpdateBallPosition(DataApi ball)
         {
@@ -159,11 +221,13 @@ namespace Logic
 
         private void OnPropertyChanged(PropertyChangedEventArgs args)
         {
+            
             PropertyChanged?.Invoke(this, args);
         }
 
         private void RelayBallUpdate(object source, PropertyChangedEventArgs args)
         {
+            
             this.OnPropertyChanged(args);
         }
 
