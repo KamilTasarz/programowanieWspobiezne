@@ -10,8 +10,9 @@ namespace Model
 {
     public interface IMyVector : INotifyPropertyChanged
     {
-        float x { get; }
-        float y { get; }
+        float x { get; set; }
+        float y { get; set; }
+        float Diameter { get; }
     }
     public class BallChangeEventArgs : EventArgs
     {

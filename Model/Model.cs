@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
+using Data;
 
 namespace Model
 {
@@ -30,9 +31,10 @@ namespace Model
             eventObservable = Observable.FromEventPattern<BallChangeEventArgs>(this, "BallChanged");
 
             EllipseVector = new MyVector[amount];
+            
             for (int i = 0; i < amount; i++)
             {
-                MyVector ball = new MyVector(logic.GetPositions()[i][0], logic.GetPositions()[i][1]);
+                MyVector ball = new MyVector(logic.GetPositions()[i][0], logic.GetPositions()[i][1], 2 * logic.GetRadius(i));
                 EllipseVector[i] = ball;
                 logic.PropertyChanged += OnBallChanged;
             }

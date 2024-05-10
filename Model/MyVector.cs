@@ -17,6 +17,7 @@ namespace Model
         public event PropertyChangedEventHandler PropertyChanged;
         private float X;
         private float Y;
+        private float diameter;
 
         public float x
         {
@@ -43,12 +44,14 @@ namespace Model
                 }
             }
         }
+        public float Diameter { get { return diameter; } }
 
 
-        public MyVector(float posX, float posY)
+        public MyVector(float posX, float posY, float diameter)
         {
             this.X = posX;
             this.Y = posY;
+            this.diameter = diameter;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")

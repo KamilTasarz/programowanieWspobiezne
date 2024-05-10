@@ -10,12 +10,14 @@ namespace Logic
 
         public abstract void Start();
         public abstract void Stop();
-        public abstract DataApi CreateBall();
+        public abstract DataApi CreateBall(int id);
         public abstract void updatePosition(DataApi ball);
         public abstract void updateVelocity(DataApi ball, bool UpDown);
         public abstract bool isCollisionUpDown(DataApi ball);
         public abstract bool isCollisionLeftRight(DataApi ball);
         public abstract float[][] GetPositions();
+
+        public abstract float GetRadius(int id);
 
         public static LogicApi CreateLogicApi(int width, int height, int amount)
         {

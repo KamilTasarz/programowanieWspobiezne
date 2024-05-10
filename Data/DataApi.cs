@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Data
@@ -8,6 +9,8 @@ namespace Data
         
         public abstract float X { get; set; }
         public abstract float Y { get; set; }
+        public abstract float Mass { get; }
+        public abstract int ID { get; }
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
 
@@ -16,9 +19,11 @@ namespace Data
         public abstract float GetVelocityY();
         public abstract void SetVelocityY(float newVelocityY);
         public abstract float GetRadius();
-        public static DataApi CreateBall(float x, float y, float radius) 
+
+        public abstract Task zadanie(CancellationToken token);
+        public static DataApi CreateBall(int id, float x, float y, float radius) 
         { 
-            return new Ball(x, y, radius); 
+            return new Ball(id, x, y, radius); 
         }
         public abstract void RaisePropertyChanged([CallerMemberName] string? propertyName = null);
     }

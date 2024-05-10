@@ -8,6 +8,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using System.Drawing;
+using System.Numerics;
 
 namespace Logic
 {
@@ -20,7 +22,7 @@ namespace Logic
         private int height;
         private DataApi[] balls;
 
-        private List<Task> tasks = new List<Task>();
+        //private List<Task> tasks = new List<Task>();
 
         //bool
         private CancellationToken isRunning;
@@ -41,16 +43,23 @@ namespace Logic
 
             for (int i = 0; i < amount; i++)
             {
-                balls[i] = CreateBall();
+                balls[i] = CreateBall(i);
                 updateVelocity(balls[i], false);
             }
         }
 
+        public override float GetRadius(int id)
+        {
+            return balls[id].GetRadius();
+        }
+
 
         Random random = new Random();
-        public override DataApi CreateBall()
+        public override DataApi CreateBall(int id)
         {
-            int radius = 10;
+            Random random = new Random();
+            //long radius = random.NextInt64(8, 12);
+            long radius = 10;
             
             float x = random.NextInt64(radius, width - radius);
             float y = random.NextInt64(radius, height - radius);
@@ -83,7 +92,7 @@ namespace Logic
                 }
                 done = true;
             }
-            return DataApi.CreateBall(x, y, radius);
+            return DataApi.CreateBall(id, x, y, radius);
         }
 
         public override float[][] GetPositions()
@@ -101,14 +110,14 @@ namespace Logic
 
         public override bool isCollisionUpDown(DataApi ball)
         {
-            return ball.Y <=0 || ball.Y >= height;
+            return ball.Y <= 0 || ball.Y >= height;
         }
         public override bool isCollisionLeftRight(DataApi ball)
         {
             return ball.X <= 0 || ball.X >= width;
         }
 
-        private async Task zadanie(CancellationToken token, DataApi ball)
+        /*private async Task zadanie(CancellationToken token, DataApi ball)
         {
 
             ball.PropertyChanged += RelayBallUpdate;
@@ -117,17 +126,16 @@ namespace Logic
                 updatePosition(ball);
                 await Task.Delay(20); 
             }
-        }
+        }*/
 
         public override void Start()
         {
             source = new CancellationTokenSource();
             foreach (var ball in balls)
             {
-
                 CancellationToken running = source.Token;
-                Task task = zadanie(running, ball);
-                tasks.Add(task);
+                ball.PropertyChanged += RelayBallUpdate;
+                ball.zadanie(running);
             }
         }
     
@@ -135,7 +143,6 @@ namespace Logic
         public override void Stop()
         {
             source.Cancel();
-            tasks.Clear();
         }
 
         public override void updatePosition(DataApi ball)
@@ -143,7 +150,7 @@ namespace Logic
             ball.X += ball.GetVelocityX();
             ball.Y += ball.GetVelocityY();
             CheckAll(ball);
-            UpdateBallPosition(ball);
+            ball.RaisePropertyChanged();
         }
 
         public override void updateVelocity(DataApi ball, bool UpDown)
@@ -169,8 +176,56 @@ namespace Logic
             }
             ball.SetVelocityX(velX);
             ball.SetVelocityY(velY);
-            ball.RaisePropertyChanged(nameof (ball.GetVelocityX));
-            ball.RaisePropertyChanged(nameof (ball.GetVelocityY));
+        }
+
+        public void InWallBoundries(DataApi ball)
+        {
+            float size = ball.GetRadius() / 2;
+            if (ball.X < size)
+            {
+                if (ball.Y < size)
+                {
+                    ball.X = size;
+                    ball.Y = size;
+                }
+                else if (ball.Y + size > height)
+                {
+                    ball.X = size;
+                    ball.Y = height - size;
+                }
+                else
+                {
+                    ball.X = size;
+                }
+            }
+            else if (ball.X + size > width)
+            {
+                if (ball.Y < size)
+                {
+                    ball.X = width - size;
+                    ball.Y = size;
+                }
+                else if (ball.Y + size > height)
+                {
+                    ball.X = width - size;
+                    ball.Y = height - size;
+                }
+                else
+                {
+                    ball.X = width - size;
+                }
+            }
+            else
+            {
+                if (ball.Y < size)
+                {
+                    ball.Y = size;
+                }
+                else if (ball.Y + size > height)
+                {
+                    ball.Y = height - size;
+                }
+            }
         }
 
         private void CheckAll(DataApi ball)
@@ -178,58 +233,90 @@ namespace Logic
             mutex.WaitOne();
             if (isCollisionUpDown(ball))
             {
+            
+                
+                InWallBoundries(ball);
                 updateVelocity(ball, true);
             }
             else if (isCollisionLeftRight(ball))
             {
+                
+                InWallBoundries(ball);
                 updateVelocity(ball, false);
             }
             checkBallCollisons(ball);
-            
 
+            OnPropertyChanged();
             mutex.ReleaseMutex();
         }
 
         private void checkBallCollisons(DataApi ball)
         {
-            float diameter = 2 * balls[0].GetRadius();
+            
             foreach(var tempBall in balls)
             {
+                float diameter = ball.GetRadius() + tempBall.GetRadius();
                 if (tempBall != ball)
                 {
                     double xdiff = tempBall.X - ball.X;
                     double ydiff = tempBall.Y - ball.Y;
-                    double distance = Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+                    double distance = Math.Sqrt(xdiff * xdiff + ydiff * ydiff) - 0.2f;
                     if  (distance <= diameter)
                     {
-                        float tempX = ball.GetVelocityX();
-                        float tempY = ball.GetVelocityY();
+                        //1 -> ball, 2 -> tempball ---- dodany kod z masą, ale nie potrzebny, ponieważ przyjeliśmy kule jednakowej wielkości
+                        /*float finVelX1 = ((ball.Mass - tempBall.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityX() + ((2 * tempBall.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityX();
+                        float finVelX2 = ((tempBall.Mass - ball.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityX() + ((2 * ball.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityX();
+                        float finVelY1 = ((ball.Mass - tempBall.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityY() + ((2 * tempBall.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityY();
+                        float finVelY2 = ((tempBall.Mass - ball.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityY() + ((2 * ball.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityY();
+                        */
+
+                        float val = ball.GetRadius() + tempBall.GetRadius() - (float) distance;
+
+                        while (distance <= diameter)
+                        {
+                            ball.X -= 0.001f * ball.GetVelocityX();
+                            ball.Y -= 0.001f * ball.GetVelocityY();
+                            xdiff = tempBall.X - ball.X;
+                            ydiff = tempBall.Y - ball.Y;
+                            distance = Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+                        }
+
+                        while (distance <= diameter)
+                        {
+                            tempBall.X -= 0.001f * tempBall.GetVelocityX();
+                            tempBall.Y -= 0.001f * tempBall.GetVelocityY();
+                            xdiff = tempBall.X - ball.X;
+                            ydiff = tempBall.Y - ball.Y;
+                            distance = Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+                        }
+
+                        float tempvel = ball.GetVelocityX();
+                        float tempvel2 = ball.GetVelocityY();
+
                         ball.SetVelocityX(tempBall.GetVelocityX());
+
+                        tempBall.SetVelocityX(tempvel);
+
                         ball.SetVelocityY(tempBall.GetVelocityY());
-                        tempBall.SetVelocityX(tempX);
-                        tempBall.SetVelocityY(tempY);
+                        
+                        tempBall.SetVelocityY(tempvel2);
                     }
                 }
             }
         }
 
-        public void UpdateBallPosition(DataApi ball)
-        {
-            ball.RaisePropertyChanged(nameof(ball.X));
-            ball.RaisePropertyChanged(nameof(ball.Y));
-        }
+        
 
-        private void OnPropertyChanged(PropertyChangedEventArgs args)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            
-            PropertyChanged?.Invoke(this, args);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void RelayBallUpdate(object source, PropertyChangedEventArgs args)
         {
-            
-            this.OnPropertyChanged(args);
+            CheckAll(balls[(int) source]);
         }
 
+        
     }
 }

@@ -39,7 +39,7 @@
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse Height="20" Width="20" Fill="red"></Ellipse>
+                        <Ellipse Height="{Binding Diameter}" Width="{Binding Diameter}" Fill="red"></Ellipse>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
