@@ -1,5 +1,5 @@
-
 using Logic;
+using Moq;
 
 namespace LogicTest
 {
@@ -55,10 +55,19 @@ namespace LogicTest
         public void CollisionsTest()
         {
             LogicApi api = LogicApi.CreateLogicApi(200, 200, 1);
-            var ball = api.CreateBall();
+            var ball = api.CreateBall(0);
             Assert.IsFalse(api.isCollisionUpDown(ball));
             Assert.IsFalse(api.isCollisionLeftRight(ball));
             
         }
+
+        [Test]
+        public void GetRadiusTest()
+        {
+            LogicApi api = LogicApi.CreateLogicApi(200, 200, 3);
+            api.Start();
+            Assert.That(api.GetRadius(0) == 10);
+        }
+
     }
 }

@@ -54,7 +54,6 @@ namespace Logic
         }
 
 
-        Random random = new Random();
         public override DataApi CreateBall(int id)
         {
             Random random = new Random();
@@ -117,16 +116,6 @@ namespace Logic
             return ball.X <= 0 || ball.X >= width;
         }
 
-        /*private async Task zadanie(CancellationToken token, DataApi ball)
-        {
-
-            ball.PropertyChanged += RelayBallUpdate;
-            while (!token.IsCancellationRequested)
-            {
-                updatePosition(ball);
-                await Task.Delay(20); 
-            }
-        }*/
 
         public override void Start()
         {
@@ -135,7 +124,7 @@ namespace Logic
             {
                 CancellationToken running = source.Token;
                 ball.PropertyChanged += RelayBallUpdate;
-                ball.zadanie(running);
+                ball.movement(running);
             }
         }
     
@@ -178,7 +167,7 @@ namespace Logic
             ball.SetVelocityY(velY);
         }
 
-        public void InWallBoundries(DataApi ball)
+        public override void InBoundries(DataApi ball)
         {
             float size = ball.GetRadius() / 2;
             if (ball.X < size)
@@ -234,14 +223,13 @@ namespace Logic
             if (isCollisionUpDown(ball))
             {
             
-                
-                InWallBoundries(ball);
+                InBoundries(ball);
                 updateVelocity(ball, true);
             }
             else if (isCollisionLeftRight(ball))
             {
                 
-                InWallBoundries(ball);
+                InBoundries(ball);
                 updateVelocity(ball, false);
             }
             checkBallCollisons(ball);
@@ -250,7 +238,7 @@ namespace Logic
             mutex.ReleaseMutex();
         }
 
-        private void checkBallCollisons(DataApi ball)
+        public override void checkBallCollisons(DataApi ball)
         {
             
             foreach(var tempBall in balls)
@@ -264,11 +252,11 @@ namespace Logic
                     if  (distance <= diameter)
                     {
                         //1 -> ball, 2 -> tempball ---- dodany kod z masą, ale nie potrzebny, ponieważ przyjeliśmy kule jednakowej wielkości
-                        /*float finVelX1 = ((ball.Mass - tempBall.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityX() + ((2 * tempBall.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityX();
+                        float finVelX1 = ((ball.Mass - tempBall.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityX() + ((2 * tempBall.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityX();
                         float finVelX2 = ((tempBall.Mass - ball.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityX() + ((2 * ball.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityX();
                         float finVelY1 = ((ball.Mass - tempBall.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityY() + ((2 * tempBall.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityY();
                         float finVelY2 = ((tempBall.Mass - ball.Mass) / (ball.Mass + tempBall.Mass)) * tempBall.GetVelocityY() + ((2 * ball.Mass) / (ball.Mass + tempBall.Mass)) * ball.GetVelocityY();
-                        */
+                        
 
                         float val = ball.GetRadius() + tempBall.GetRadius() - (float) distance;
 
@@ -290,7 +278,7 @@ namespace Logic
                             distance = Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
                         }
 
-                        float tempvel = ball.GetVelocityX();
+                        /*float tempvel = ball.GetVelocityX();
                         float tempvel2 = ball.GetVelocityY();
 
                         ball.SetVelocityX(tempBall.GetVelocityX());
@@ -299,7 +287,14 @@ namespace Logic
 
                         ball.SetVelocityY(tempBall.GetVelocityY());
                         
-                        tempBall.SetVelocityY(tempvel2);
+                        tempBall.SetVelocityY(tempvel2);*/
+                        ball.SetVelocityX(finVelX1);
+
+                        tempBall.SetVelocityX(finVelX2);
+
+                        ball.SetVelocityY(finVelY1);
+                        
+                        tempBall.SetVelocityY(finVelY2);
                     }
                 }
             }

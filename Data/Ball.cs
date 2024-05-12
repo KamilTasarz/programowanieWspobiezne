@@ -61,7 +61,7 @@ namespace Data
            velocityX = newVelocityX; 
         }
 
-        public override async Task zadanie(CancellationToken token)
+        public override async Task movement(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
@@ -80,7 +80,6 @@ namespace Data
             PropertyChanged?.Invoke(ID, new PropertyChangedEventArgs(propertyName));
         }
 
-        //Random random = new Random();
 
         public Ball (int identifier, float x, float y, float radius) {
             this.x = x;

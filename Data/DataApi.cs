@@ -20,7 +20,7 @@ namespace Data
         public abstract void SetVelocityY(float newVelocityY);
         public abstract float GetRadius();
 
-        public abstract Task zadanie(CancellationToken token);
+        public abstract Task movement(CancellationToken token);
         public static DataApi CreateBall(int id, float x, float y, float radius) 
         { 
             return new Ball(id, x, y, radius); 

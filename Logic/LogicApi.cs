@@ -16,6 +16,8 @@ namespace Logic
         public abstract bool isCollisionUpDown(DataApi ball);
         public abstract bool isCollisionLeftRight(DataApi ball);
         public abstract float[][] GetPositions();
+        public abstract void InBoundries(DataApi ball);
+        public abstract void checkBallCollisons(DataApi ball);
 
         public abstract float GetRadius(int id);
 
