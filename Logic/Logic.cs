@@ -21,6 +21,7 @@ namespace Logic
         private int width;
         private int height;
         private DataApi[] balls;
+        private LoggerApi logger;
 
         //private List<Task> tasks = new List<Task>();
 
@@ -38,8 +39,9 @@ namespace Logic
             this.width = width;
             this.height = height;
             balls = new DataApi[amount];
-            
 
+            logger = LoggerApi.CreateApi();
+            logger.CreateLog("{"+String.Format("\"Width\": {0}, \"Hight\": {1}", width, height)+" }");
 
             for (int i = 0; i < amount; i++)
             {
@@ -91,7 +93,7 @@ namespace Logic
                 }
                 done = true;
             }
-            return DataApi.CreateBall(id, x, y, radius);
+            return DataApi.CreateBall(id, x, y, radius, logger);
         }
 
         public override float[][] GetPositions()

@@ -20,6 +20,7 @@ namespace Data
         private float velocityY;
         private float radius;
         private float mass;
+        private LoggerApi logger;
         
         public override float X
         {
@@ -67,6 +68,7 @@ namespace Data
             {
                 X += GetVelocityX();
                 Y += GetVelocityY();
+                logger.CreateLog(CreateLogMsg());
                 RaisePropertyChanged();
                 await Task.Delay(30);
             }
@@ -81,12 +83,29 @@ namespace Data
         }
 
 
-        public Ball (int identifier, float x, float y, float radius) {
+        public Ball (int identifier, float x, float y, float radius, LoggerApi log) {
             this.x = x;
             this.y = y;
-            this.id = identifier;
+            id = identifier;
             this.radius = radius;
+            logger = log;
             mass = 0.008f * radius * radius * radius; //masa dla kuli o srednicy 10 cm przyjmujemy 1kg, zatem gestosc to 0.002 kg/cm3
+        }
+
+        private string CreateLogMsg()
+        {
+            string dateStamp, data;
+            string log = "";
+
+            if (this != null)
+            {
+                data = String.Format("\"ID\": \"{0}\", \"X\": \"{1}\", \"Y\": \"{2}\", \"VelocityX\": \"{3}\", \"VelocityY\": \"{4}\"", ID, X, Y, GetVelocityX(), GetVelocityY());
+          
+                dateStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.fff");
+                log = "{" + String.Format("\"Date\": \"{0}\", \"Ball\":{1}", dateStamp, data) + "}";
+            }
+
+            return log;
         }
 
     }
