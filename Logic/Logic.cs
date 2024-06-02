@@ -222,13 +222,11 @@ namespace Logic
             mutex.WaitOne();
             if (isCollisionUpDown(ball))
             {
-            
                 InBoundries(ball);
                 updateVelocity(ball, true);
             }
             else if (isCollisionLeftRight(ball))
             {
-                
                 InBoundries(ball);
                 updateVelocity(ball, false);
             }
@@ -288,6 +286,7 @@ namespace Logic
                         ball.SetVelocityY(tempBall.GetVelocityY());
                         
                         tempBall.SetVelocityY(tempvel2);*/
+
                         ball.SetVelocityX(finVelX1);
 
                         tempBall.SetVelocityX(finVelX2);
