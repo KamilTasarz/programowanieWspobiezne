@@ -21,9 +21,9 @@ namespace Data
         public abstract float GetRadius();
 
         public abstract Task movement(CancellationToken token);
-        public static DataApi CreateBall(int id, float x, float y, float radius) 
+        public static DataApi CreateBall(int id, float x, float y, float radius, LoggerApi api) 
         { 
-            return new Ball(id, x, y, radius); 
+            return new Ball(id, x, y, radius, api); 
         }
         public abstract void RaisePropertyChanged([CallerMemberName] string? propertyName = null);
     }
