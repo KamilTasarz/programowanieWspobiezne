@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Data
+﻿namespace Data
 {
     public abstract class LoggerApi
     {
         public static LoggerApi CreateApi()
         {
-            string dateDay = DateTime.Now.ToString("ddMMyyyy");
-            string dateTime = DateTime.Now.ToString("HHmmss");
-            return new Logger($"BallsInfo_{dateDay}_{dateTime}.log");
+            string date = DateTime.Now.ToString("ddMMyyyy");
+            string time = DateTime.Now.ToString("HHmmss");
+            return new Logger($"BallsInfo_{date}_{time}.log");
         }
 
         public abstract void CreateLog(string message);

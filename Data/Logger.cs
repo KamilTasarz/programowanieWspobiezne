@@ -13,7 +13,6 @@ namespace Data
     {
         private readonly string filename;
         private readonly ConcurrentQueue<string> logsQueue;
-        private Task task;
         private readonly AsyncAutoResetEvent waitForQueue = new AsyncAutoResetEvent(false);
         private Mutex mutexLogger = new Mutex();
 
@@ -22,7 +21,7 @@ namespace Data
         {
             filename = pathWithExtention;
             logsQueue = new ConcurrentQueue<string>();
-            task = RunLogger(CancellationToken.None);
+            Task task = RunLogger(CancellationToken.None);
         }
 
         public override void CreateLog(string message)
@@ -35,18 +34,17 @@ namespace Data
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (!cancellationToken.IsCancellationRequested)
+                
+                while (!logsQueue.IsEmpty)
                 {
-                    while (!logsQueue.IsEmpty)
+                    mutexLogger.WaitOne();
+                    if (logsQueue.TryDequeue(out var logMsg))
                     {
-                        mutexLogger.WaitOne();
-                        if (logsQueue.TryDequeue(out var logMsg))
-                        {
-                            File.AppendAllText(filename, logMsg + "\n");
-                        }
-                        mutexLogger.ReleaseMutex();
+                        File.AppendAllText(filename, logMsg + "\n");
                     }
+                    mutexLogger.ReleaseMutex();
                 }
+                
                 await waitForQueue.WaitAsync(cancellationToken);
             }
         }

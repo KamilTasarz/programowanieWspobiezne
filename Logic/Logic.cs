@@ -39,9 +39,9 @@ namespace Logic
             this.width = width;
             this.height = height;
             balls = new DataApi[amount];
-
+            String startDate = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.fff");
             logger = LoggerApi.CreateApi();
-            logger.CreateLog("{"+String.Format("\"Width\": {0}, \"Hight\": {1}", width, height)+" }");
+            logger.CreateLog("{"+String.Format("\"Width\": {0}, \"Hight\": {1}, \"StartDate\": {2}", width, height, startDate)+" }");
 
             for (int i = 0; i < amount; i++)
             {

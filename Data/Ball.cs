@@ -99,7 +99,7 @@ namespace Data
 
             if (this != null)
             {
-                data = String.Format("\"ID\": \"{0}\", \"X\": \"{1}\", \"Y\": \"{2}\", \"VelocityX\": \"{3}\", \"VelocityY\": \"{4}\"", ID, X, Y, GetVelocityX(), GetVelocityY());
+                data = "{" + String.Format("\"ID\": \"{0}\", \"X\": \"{1}\", \"Y\": \"{2}\", \"VelocityX\": \"{3}\", \"VelocityY\": \"{4}\"", ID, X, Y, GetVelocityX(), GetVelocityY()) + "}";
           
                 dateStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.fff");
                 log = "{" + String.Format("\"Date\": \"{0}\", \"Ball\":{1}", dateStamp, data) + "}";
