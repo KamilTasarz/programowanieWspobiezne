@@ -1,4 +1,6 @@
-﻿namespace Data
+﻿using System.Timers;
+
+namespace Data
 {
     public abstract class LoggerApi
     {
@@ -6,6 +8,8 @@
         {
             string date = DateTime.Now.ToString("ddMMyyyy");
             string time = DateTime.Now.ToString("HHmmss");
+            
+
             return new Logger($"BallsInfo_{date}_{time}.log");
         }
 

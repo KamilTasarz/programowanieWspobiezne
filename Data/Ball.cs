@@ -70,7 +70,7 @@ namespace Data
                 Y += GetVelocityY();
                 logger.CreateLog(CreateLogMsg());
                 RaisePropertyChanged();
-                await Task.Delay(30);
+                await Task.Delay(40);
             }
         }
 

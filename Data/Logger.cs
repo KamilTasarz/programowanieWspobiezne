@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using Nito.AsyncEx;
+using System.Timers;
 
 namespace Data
 {
@@ -15,26 +16,45 @@ namespace Data
         private readonly ConcurrentQueue<string> logsQueue;
         private readonly AsyncAutoResetEvent waitForQueue = new AsyncAutoResetEvent(false);
         private Mutex mutexLogger = new Mutex();
+        private System.Timers.Timer timer = new System.Timers.Timer(1000);
 
 
         public Logger(string pathWithExtention)
         {
             filename = pathWithExtention;
             logsQueue = new ConcurrentQueue<string>();
-            Task task = RunLogger(CancellationToken.None);
+            //Task task = RunLogger(CancellationToken.None);
+            timer.Enabled = true;
+            timer.AutoReset = true;
+            timer.Elapsed += OnTimedEvent;
+            timer.Start();
+            
         }
 
         public override void CreateLog(string message)
         {
             logsQueue.Enqueue(message);
-            waitForQueue.Set();
+            //waitForQueue.Set();
         }
 
-        private async Task RunLogger(CancellationToken cancellationToken)
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            while (!logsQueue.IsEmpty)
+            {
+                mutexLogger.WaitOne();
+                if (logsQueue.TryDequeue(out var logMsg))
+                {
+                    File.AppendAllText(filename, logMsg + "\n");
+                }
+                mutexLogger.ReleaseMutex();
+            }
+        }
+
+        /*private async Task RunLogger(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                
+                timer.Elapsed
                 while (!logsQueue.IsEmpty)
                 {
                     mutexLogger.WaitOne();
@@ -45,8 +65,9 @@ namespace Data
                     mutexLogger.ReleaseMutex();
                 }
                 
-                await waitForQueue.WaitAsync(cancellationToken);
+                //await waitForQueue.WaitAsync(cancellationToken);
+                
             }
-        }
+        }*/
     }
 }
